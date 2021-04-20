@@ -8,6 +8,7 @@ from time import sleep
 import pandas as pd
 
 
+
 url = 'https://moscow.hh.ru/vacancies/product_manager'
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
@@ -16,34 +17,34 @@ headers = {
 
 
 file_path ='hh_product!manager_vacancy.json'
-proxies = {'https': f"{FreeProxy().get()}"}
-
-pages = 0
-file_list = []
-while pages <= 39:
-    sleep(0.5)
-    r = requests.get(url, headers=headers, proxies=proxies)
-    if r.status_code < 300:
-
-        r.encoding = 'utf-8'
-        file_list.append(r.text)
-        try:
-            soup = bs(r.text, 'html.parser')
-            next_bottom = soup.find(attrs={'data-qa': "pager-block"})
-            buttom_url = next_bottom.find('a')
-            a = buttom_url.attrs['href']
-            nex_page_url = f"https://moscow.hh.ru{a}"
-            url = nex_page_url
-            pages += 1
-            print(pages)
-            pprint(file_list)
-        except Exception:
-            print('error')
-    else:
-        print(r.status_code)
-
-with open(file_path, 'wb') as f:
-    pickle.dump(file_list, f)
+# proxies = {'https': f"{FreeProxy().get()}"}
+#
+# pages = 0
+# file_list = []
+# while pages <= 39:
+#     sleep(0.5)
+#     r = requests.get(url, headers=headers, proxies=proxies)
+#     if r.status_code < 300:
+#
+#         r.encoding = 'utf-8'
+#         file_list.append(r.text)
+#         try:
+#             soup = bs(r.text, 'html.parser')
+#             next_bottom = soup.find(attrs={'data-qa': "pager-block"})
+#             buttom_url = next_bottom.find('a')
+#             a = buttom_url.attrs['href']
+#             nex_page_url = f"https://moscow.hh.ru{a}"
+#             url = nex_page_url
+#             pages += 1
+#             print(pages)
+#             pprint(file_list)
+#         except Exception:
+#             print('error')
+#     else:
+#         print(r.status_code)
+#
+# with open(file_path, 'wb') as f:
+#     pickle.dump(file_list, f)
 
 
 
@@ -64,14 +65,58 @@ for b in req:
         else:
             b = str(selary.text)
             clear_text = b.replace('\u202f', '')
-            info['salary'] = clear_text
+            separated = clear_text.split(' ')
+
+            for c in separated:
+                if c == '–':
+                    separated.remove('–')
+                elif c == 'руб.':
+                    separated.remove('руб.')
+                elif c == 'от':
+                    separated.remove('от')
+                elif c == 'до':
+                    separated.remove('до')
+                elif c == 'USD':
+                    num = int(separated[0]) * 78
+                    separated.append(num)
+                    index_usd = separated.index('USD')
+                    separated.remove('USD')
+
+                    ind = 0
+                    while index_usd > ind:
+                        separated.pop(ind)
+                        ind += 1
+
+                else:
+                    continue
+
+            for integer in separated:
+                b = int(integer)
+                maximum = max(separated)
+                minimum = min(separated)
+
+                info['salary'] = {
+                'max salary': maximum,
+                'min salary': minimum
+                }
+
+
+
+
+
+
+
         info['Vacancy TITLE'] = a.text
         info['Vacancy URL'] = a.attrs['href']
         info['site path'] = url
         vacancy.append(info)
 
-df = pd.DataFrame.from_records(vacancy)
-data_cv = df.to_csv('Product_vacansy.csv')
+pprint(vacancy)
+with open('Product_vacansy_json.json', 'wb') as f:
+    pickle.dump(vacancy,f)
+
+# df = pd.DataFrame.from_records(vacancy)
+# data_cv = df.to_csv('Product_vacansy.csv')
 
 
 
