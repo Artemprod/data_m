@@ -17,4 +17,4 @@ class BookparserItem(scrapy.Item):
 
 
 
-    pass
+

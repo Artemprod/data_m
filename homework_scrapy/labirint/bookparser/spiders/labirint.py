@@ -19,10 +19,10 @@ class LabirintSpider(scrapy.Spider):
         next_page = response.xpath('//div[contains(@class, "pagination-next")]'
                                    '/a[contains(@class, "pagination-next")]/@href').get()
         full_link_next_page = f"{LabirintSpider.start_urls[0]}{next_page}"
-        print()
+
 
         if next_page:
-            yield response.follow(full_link_next_page, callback=self.parse())
+            yield response.follow(full_link_next_page, callback=self.parse)
 
     def process_item(self,response:HtmlResponse):
         item = BookparserItem()
