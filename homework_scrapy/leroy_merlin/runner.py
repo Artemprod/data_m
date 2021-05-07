@@ -6,8 +6,8 @@ from leroy_merlin.lerroymerlin.spiders.leroymerlin import LeroymerlinSpider
 from urllib.parse import quote_plus
 
 if __name__ == '__main__':
-    # search = str(input('что ищем ?: '))
-    search = 'обои'
+    search = str(input('что ищем ?: '))
+    # search = 'обои'
     crawler_setings = Settings()
     crawler_setings.setmodule(settings)
 

@@ -8,6 +8,7 @@
 from itemadapter import ItemAdapter
 from scrapy.pipelines.images import ImagesPipeline
 import scrapy
+from pymongo import MongoClient
 
 
 
@@ -29,7 +30,14 @@ class LeroyMerlinImagesPipeline(ImagesPipeline):
 
 class LerroymerlinPipeline:
 
+    def __init__(self):
+        self.client = MongoClient('localhost:27017')
+        self.db = self.client['LeroyMerlin']
+
     def process_item(self, item, spider):
+        self.db[spider.name].insert_one(item)
+
+
         print()
         return item
 

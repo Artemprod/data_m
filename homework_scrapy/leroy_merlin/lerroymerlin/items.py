@@ -13,9 +13,9 @@ def get_photo_big(url):
     return url
 
 
-#
+
 # def del_gap(params_2):
-#     params_2 = params_2.remove('')
+#     params_2.split(' ')
 #     return params_2
 
 
